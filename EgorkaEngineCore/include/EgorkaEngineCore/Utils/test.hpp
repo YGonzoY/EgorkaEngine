@@ -1,0 +1,4 @@
+namespace EgorkaEngine
+{
+	void sayHello();
+}
