@@ -1,13 +1,24 @@
 #include <iostream>
-#include "EgorkaEngineCore/Utils/test.hpp"
+#include <memory>
+#include "EgorkaEngineCore/Application.hpp"
 
-using namespace std;
+class MyApp : public EgorkaEngine::Application
+{
+	virtual void on_update() override
+	{
+		std::cout << "frame" << frame++;
+	}
+
+	int frame = 0;
+};
 
 int main()
 {
-	cout << "Hello from editor";
+	auto myApp = std::make_unique<MyApp>();
 
-	EgorkaEngine::sayHello();
+	int returnCode = myApp->start(1024, 768, "a");
 
-	cin.get();
+	std::cin.get();
+
+	return returnCode;
 }
