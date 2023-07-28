@@ -7,16 +7,23 @@ set(ENGINE_PUBLIC_INCLUDES
 	include/EgorkaEngineCore/Log.hpp
 )
 
+set(ENGINE_PRIVATE_INCLUDES
+	src/EgorkaEngineCore/Window.hpp
+)
+
 set(ENGINE_PRIVATE_SOURCES
 	src/EgorkaEngineCore/Application.cpp
+	src/EgorkaEngineCore/Window.cpp
 )
 
 add_library(${ENGINE_PROJECT_NAME} STATIC
 	${ENGINE_PUBLIC_INCLUDES}
 	${ENGINE_PRIVATE_SOURCES}
+	${ENGINE_PRIVATE_INCLUDES}
 )
 
 target_include_directories(${ENGINE_PROJECT_NAME} PUBLIC include)
+target_include_directories(${ENGINE_PROJECT_NAME} PRIVATE src)
 target_compile_features(${ENGINE_PROJECT_NAME} PUBLIC cxx_std_17)
 
 add_subdirectory(../external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)

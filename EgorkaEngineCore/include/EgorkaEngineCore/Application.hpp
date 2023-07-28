@@ -1,9 +1,13 @@
 #pragma once
 
+#include <memory>
+
 namespace EgorkaEngine
 {
 	class Application
 	{
+	private:
+		std::unique_ptr<class Window> window;
 	public:
 		Application();
 		Application(const Application&) = delete;
@@ -15,5 +19,7 @@ namespace EgorkaEngine
 		virtual void on_update() {}
 
 		virtual ~Application();
+
+		
 	};
 }
