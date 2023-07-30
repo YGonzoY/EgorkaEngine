@@ -5,6 +5,7 @@ set(ENGINE_PROJECT_NAME EgorkaEngineCore)
 set(ENGINE_PUBLIC_INCLUDES
 	include/EgorkaEngineCore/Application.hpp
 	include/EgorkaEngineCore/Log.hpp
+	include/EgorkaEngineCore/Event.hpp
 )
 
 set(ENGINE_PRIVATE_INCLUDES

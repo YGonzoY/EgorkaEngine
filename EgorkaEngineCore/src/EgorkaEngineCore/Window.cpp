@@ -9,8 +9,10 @@ namespace EgorkaEngine
     static bool GLFW_initialized = false;
 
 	Window::Window(std::string _title, const unsigned int _height, const unsigned int _width)
-		:title(std::move(_title)), width(_width), height(_height)
 	{
+        wData.title = _title;
+        wData.height = _height;
+        wData.width = _width;
 		int result = init();
 	}
 	Window::~Window()
@@ -20,11 +22,6 @@ namespace EgorkaEngine
 
 	int Window::init()
 	{
-        LOG_INFO("Welcome to spdlog!");
-        LOG_ERROR("Some error message with arg: {}", 1);
-
-        LOG_WARN("Easy padding in numbers like {:08d}", 12);
-        LOG_CRITICAL("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
 
         if (!GLFW_initialized)
         {
@@ -35,7 +32,7 @@ namespace EgorkaEngine
         }
 
         /* Create a windowed mode window and its OpenGL context */
-        window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+        window = glfwCreateWindow(wData.width, wData.height, wData.title.c_str(), nullptr, nullptr);
         if (!window)
         {
             glfwTerminate();
@@ -49,6 +46,24 @@ namespace EgorkaEngine
             LOG_CRITICAL("Can not initialize GLAD");
             return -3;
         }
+
+        glfwSetWindowUserPointer(window, &wData);
+
+        glfwSetWindowSizeCallback(window, 
+            [](GLFWwindow* window, int width, int height)
+            {
+
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            data.width = width;
+            data.height = height;
+
+            Event event;
+            event.width = width;
+            event.height = height;
+
+            data.eventCallBackF(event);
+            }
+        );
 
         return 0;
 
