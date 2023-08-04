@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "EgorkaEngineCore/Event.hpp"
 
 namespace EgorkaEngine
 {
@@ -8,6 +9,9 @@ namespace EgorkaEngine
 	{
 	private:
 		std::unique_ptr<class Window> window;
+
+		EventDispatcher event_dispatcher;
+		bool CloseWindow = false;
 	public:
 		Application();
 		Application(const Application&) = delete;

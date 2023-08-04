@@ -57,11 +57,17 @@ namespace EgorkaEngine
             data.width = width;
             data.height = height;
 
-            Event event;
-            event.width = width;
-            event.height = height;
-
+            EventWindowResize event(width, height);
             data.eventCallBackF(event);
+            }
+        );
+
+        glfwSetCursorPosCallback(window, [](GLFWwindow* window, double x, double y) 
+            {
+                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+
+                EventMouseMoved event(x, y);
+                data.eventCallBackF(event);
             }
         );
 

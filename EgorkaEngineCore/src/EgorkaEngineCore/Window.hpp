@@ -11,7 +11,7 @@ namespace EgorkaEngine
 	class Window
 	{
 	public:
-		using EventCallBackF = std::function<void(Event&)>;
+		using EventCallBackF = std::function<void(BaseEvent&)>;
 
 		Window(std::string _title,const unsigned int _height, const unsigned int _width);
 		Window(const Window&) = delete;
