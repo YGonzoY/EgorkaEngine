@@ -71,6 +71,15 @@ namespace EgorkaEngine
             }
         );
 
+        glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
+            {
+                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+
+                EventWindowClose event;
+                data.eventCallBackF(event);
+            }
+        );
+
         return 0;
 
         glClearColor(0, 1, 0, 0);

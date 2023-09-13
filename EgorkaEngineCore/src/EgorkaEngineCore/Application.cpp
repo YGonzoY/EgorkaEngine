@@ -28,11 +28,18 @@ namespace EgorkaEngine
 				});
 
 
+			event_dispatcher.add_event_listener<EventWindowClose>(
+				[&](EventWindowClose& event)
+					{
+						LOG_INFO("window closed");
+						CloseWindow = true;
+					});
+
 			event_dispatcher.add_event_listener<EventWindowResize>(
 				[](EventWindowResize& event)
-					{
-						LOG_INFO("window resized to {0}x{1}", event.height, event.width);
-					});
+				{
+					LOG_INFO("window resized to {0}x{1}", event.height, event.width);
+				});
 
 			window->set_eventcallback(
 				[&](BaseEvent& event)

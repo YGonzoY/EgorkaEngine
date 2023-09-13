@@ -61,16 +61,9 @@ namespace EgorkaEngine
 
     struct EventMouseMoved : public BaseEvent
     {
-        EventMouseMoved(const double new_x, const double new_y)
-            : x(new_x)
-            , y(new_y)
-        {
-        }
+        EventMouseMoved(const double new_x, const double new_y) : x(new_x), y(new_y) {}
 
-        virtual EventType get_type() const override
-        {
-            return type;
-        }
+        virtual EventType get_type() const override {return type;}
 
         double x;
         double y;
@@ -80,16 +73,9 @@ namespace EgorkaEngine
 
     struct EventWindowResize : public BaseEvent
     {
-        EventWindowResize(const unsigned int new_width, const unsigned int new_height)
-            : width(new_width)
-            , height(new_height)
-        {
-        }
+        EventWindowResize(const unsigned int new_width, const unsigned int new_height) : width(new_width), height(new_height) {}
 
-        virtual EventType get_type() const override
-        {
-            return type;
-        }
+        virtual EventType get_type() const override {return type;}
 
         unsigned int width;
         unsigned int height;
@@ -99,10 +85,7 @@ namespace EgorkaEngine
 
     struct EventWindowClose : public BaseEvent
     {
-        virtual EventType get_type() const override
-        {
-            return type;
-        }
+        virtual EventType get_type() const override {return type;}
 
         static const EventType type = EventType::WindowClose;
     };
