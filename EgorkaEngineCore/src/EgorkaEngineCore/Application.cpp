@@ -56,4 +56,5 @@ namespace EgorkaEngine
 			window = nullptr;
 			return 0;
 		}
+
 }
