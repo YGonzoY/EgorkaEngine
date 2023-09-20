@@ -6,6 +6,7 @@
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/backends/imgui_impl_glfw.h>
 
 namespace EgorkaEngine
 {
@@ -21,6 +22,7 @@ namespace EgorkaEngine
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGui_ImplOpenGL3_Init();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
 	}
 	Window::~Window()
 	{
@@ -116,7 +118,7 @@ namespace EgorkaEngine
 
 	void Window::on_update() 
 	{
-        glClearColor(0, 1, 0, 0);
+        glClearColor(background_color[0], background_color[1], background_color[2], background_color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
 
         ImGuiIO& io = ImGui::GetIO();
@@ -124,8 +126,12 @@ namespace EgorkaEngine
         io.DisplaySize.y = static_cast<float>(get_width());
 
         ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         ImGui::ShowDemoWindow();
+        ImGui::Begin("Background Color Window");
+        ImGui::ColorEdit4("Background Color", background_color);
+        ImGui::End();
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);
