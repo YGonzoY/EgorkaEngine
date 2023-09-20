@@ -4,6 +4,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+
 namespace EgorkaEngine
 {
     static bool GLFW_initialized = false;
@@ -14,6 +17,10 @@ namespace EgorkaEngine
         wData.height = _height;
         wData.width = _width;
 		int result = init();
+
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGui_ImplOpenGL3_Init();
 	}
 	Window::~Window()
 	{
@@ -111,6 +118,16 @@ namespace EgorkaEngine
 	{
         glClearColor(0, 1, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        ImGuiIO& io = ImGui::GetIO();
+        io.DisplaySize.x = static_cast<float>(get_width());
+        io.DisplaySize.y = static_cast<float>(get_width());
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
