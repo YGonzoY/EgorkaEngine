@@ -15,15 +15,13 @@ namespace EgorkaEngine
     /*JUST FOR TESTING*/
     /*FURTHER CHANGE THIS TO NORMAL CODE 
     WITH READING FROM FILES AND ETC*/
-    GLfloat point[] =
-    {
+    GLfloat points[] = {
         0.0f,  0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
        -0.5f, -0.5f, 0.0f
     };
 
-    GLfloat colors[] =
-    {
+    GLfloat colors[] = {
         1.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 1.0f
@@ -44,11 +42,12 @@ namespace EgorkaEngine
         "in vec3 color;"
         "out vec4 frag_color;"
         "void main() {"
-        "   frag_clor = vec4(color, 1.0);"
+        "   frag_color = vec4(color, 1.0);"
         "}";
 
     GLuint shader_program;
     GLuint vao;
+
     /**/
 	Window::Window(std::string _title, const unsigned int _height, const unsigned int _width)
 	{
@@ -127,7 +126,8 @@ namespace EgorkaEngine
             }
         );
 
-        glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height)
+        glfwSetFramebufferSizeCallback(window,
+            [](GLFWwindow* pWindow, int width, int height)
             {
                 glViewport(0, 0, width, height);
             }
@@ -153,13 +153,12 @@ namespace EgorkaEngine
         GLuint points_vbo = 0;
         glGenBuffers(1, &points_vbo);
         glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(point), point, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 
         GLuint colors_vbo = 0;
         glGenBuffers(1, &colors_vbo);
         glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-
 
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
@@ -169,7 +168,7 @@ namespace EgorkaEngine
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         return 0;
