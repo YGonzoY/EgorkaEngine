@@ -8,6 +8,8 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
+#include "EgorkaEngineCore//Rendering//OpenGL/ShaderProgram.hpp"
+
 namespace EgorkaEngine
 {
     static bool GLFW_initialized = false;
@@ -45,7 +47,9 @@ namespace EgorkaEngine
         "   frag_color = vec4(color, 1.0);"
         "}";
 
-    GLuint shader_program;
+
+    std::unique_ptr<ShaderProgram> shader_program;
+    //GLuint shader_program;
     GLuint vao;
 
     /**/
@@ -134,21 +138,11 @@ namespace EgorkaEngine
         );
 
 
-        GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vs, 1, &vertex_shader, nullptr);
-        glCompileShader(vs);
-
-        GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fs, 1, &fragment_shader, nullptr);
-        glCompileShader(fs);
-
-        shader_program = glCreateProgram();
-        glAttachShader(shader_program, vs);
-        glAttachShader(shader_program, fs);
-        glLinkProgram(shader_program);
-
-        glDeleteShader(vs);
-        glDeleteShader(fs);
+        shader_program = std::make_unique<ShaderProgram>(vertex_shader, fragment_shader);
+        if (!shader_program->isCompiled())
+        {
+            return false;
+        }
 
         GLuint points_vbo = 0;
         glGenBuffers(1, &points_vbo);
@@ -186,7 +180,7 @@ namespace EgorkaEngine
         glClearColor(background_color[0], background_color[1], background_color[2], background_color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shader_program);
+        shader_program->bind();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
