@@ -11,12 +11,14 @@ set(ENGINE_PUBLIC_INCLUDES
 set(ENGINE_PRIVATE_INCLUDES
 	src/EgorkaEngineCore/Window.hpp
 	src/EgorkaEngineCore/Rendering/OpenGL/ShaderProgram.hpp
+	src/EgorkaEngineCore/Rendering/OpenGL/VertexBuffer.hpp
 )
 
 set(ENGINE_PRIVATE_SOURCES
 	src/EgorkaEngineCore/Application.cpp
 	src/EgorkaEngineCore/Window.cpp
 	src/EgorkaEngineCore/Rendering/OpenGL/ShaderProgram.cpp
+	src/EgorkaEngineCore/Rendering/OpenGL/VertexBuffer.cpp
 )
 
 set(ENGINE_ALL_SOURCES
