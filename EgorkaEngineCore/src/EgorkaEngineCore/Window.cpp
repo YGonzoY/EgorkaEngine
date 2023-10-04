@@ -2,6 +2,7 @@
 #include "EgorkaEngineCore/Log.hpp"
 #include "EgorkaEngineCore/Rendering/OpenGL/ShaderProgram.hpp"
 #include "EgorkaEngineCore/Rendering/OpenGL/VertexBuffer.hpp"
+#include "EgorkaEngineCore/Rendering/OpenGL/VertexArray.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -53,8 +54,7 @@ namespace EgorkaEngine
     std::unique_ptr<ShaderProgram> shader_program;
     std::unique_ptr<VertexBuffer> points_vbo;
     std::unique_ptr<VertexBuffer> color_vbo;
-    //GLuint shader_program;
-    GLuint vao;
+    std::unique_ptr<VertexArray> vao;
 
     /**/
 	Window::Window(std::string _title, const unsigned int _height, const unsigned int _width)
@@ -149,19 +149,11 @@ namespace EgorkaEngine
         }
 
         points_vbo = std::make_unique<VertexBuffer>(points, sizeof(points));
-
         color_vbo = std::make_unique<VertexBuffer>(colors, sizeof(colors));
+        vao = std::make_unique<VertexArray>();
 
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-
-        glEnableVertexAttribArray(0);
-        points_vbo->bind();
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-        glEnableVertexAttribArray(1);
-        color_vbo->bind();
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        vao->add_buffer(*points_vbo);
+        vao->add_buffer(*color_vbo);
 
         return 0;
 
@@ -179,7 +171,7 @@ namespace EgorkaEngine
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader_program->bind();
-        glBindVertexArray(vao);
+        vao->bind();
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
 

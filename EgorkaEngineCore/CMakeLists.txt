@@ -12,6 +12,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/EgorkaEngineCore/Window.hpp
 	src/EgorkaEngineCore/Rendering/OpenGL/ShaderProgram.hpp
 	src/EgorkaEngineCore/Rendering/OpenGL/VertexBuffer.hpp
+	src/EgorkaEngineCore/Rendering/OpenGL/VertexArray.hpp
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -19,6 +20,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/EgorkaEngineCore/Window.cpp
 	src/EgorkaEngineCore/Rendering/OpenGL/ShaderProgram.cpp
 	src/EgorkaEngineCore/Rendering/OpenGL/VertexBuffer.cpp
+	src/EgorkaEngineCore/Rendering/OpenGL/VertexArray.cpp
 )
 
 set(ENGINE_ALL_SOURCES
