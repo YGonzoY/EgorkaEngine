@@ -43,7 +43,7 @@ namespace EgorkaEngine
 
 		GLFWwindow* window = nullptr;
 
-		float background_color[4] = { 0.f, 1.f, 0.f, 0.f };
+		float background_color[4] = { 0.f, 0.5f, 0.5f, 0.5f };
 
 		int init();
 		int shutDown();
