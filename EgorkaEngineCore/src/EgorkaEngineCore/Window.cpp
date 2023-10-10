@@ -32,6 +32,12 @@ namespace EgorkaEngine
         0.0f, 0.0f, 1.0f
     };
 
+    GLfloat positions_colors[] = {
+        1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f
+    };
+
     const char* vertex_shader =
         "#version 460\n"
         "layout(location = 0) in vec3 vertex_position;"
@@ -54,7 +60,10 @@ namespace EgorkaEngine
     std::unique_ptr<ShaderProgram> shader_program;
     std::unique_ptr<VertexBuffer> points_vbo;
     std::unique_ptr<VertexBuffer> color_vbo;
-    std::unique_ptr<VertexArray> vao;
+    std::unique_ptr<VertexArray> vao_2;
+
+    std::unique_ptr<VertexBuffer> positions_color_vbo;
+    std::unique_ptr<VertexArray> vao_1;
 
     /**/
 	Window::Window(std::string _title, const unsigned int _height, const unsigned int _width)
@@ -148,12 +157,28 @@ namespace EgorkaEngine
             return false;
         }
 
-        points_vbo = std::make_unique<VertexBuffer>(points, sizeof(points));
-        color_vbo = std::make_unique<VertexBuffer>(colors, sizeof(colors));
-        vao = std::make_unique<VertexArray>();
+        BufferLayout buffer_layout_1_vec_3
+        {
+            ShaderDataType::Float3
+        };
 
-        vao->add_buffer(*points_vbo);
-        vao->add_buffer(*color_vbo);
+        vao_2 = std::make_unique<VertexArray>();
+        points_vbo = std::make_unique<VertexBuffer>(points, sizeof(points), buffer_layout_1_vec_3);
+        color_vbo = std::make_unique<VertexBuffer>(colors, sizeof(colors), buffer_layout_1_vec_3);
+
+        vao_2->add_buffer(*points_vbo);
+        vao_2->add_buffer(*color_vbo);
+
+        BufferLayout buffer_layout_2_vec_3
+        {
+            ShaderDataType::Float3,
+            ShaderDataType::Float3
+        };
+
+        vao_1 = std::make_unique<VertexArray>();
+        positions_color_vbo = std::make_unique<VertexBuffer>(positions_colors, sizeof(positions_colors), buffer_layout_2_vec_3);
+
+        vao_1->add_buffer(*positions_color_vbo);
 
         return 0;
 
@@ -171,7 +196,7 @@ namespace EgorkaEngine
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader_program->bind();
-        vao->bind();
+        vao_2->bind();
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
@@ -185,6 +210,22 @@ namespace EgorkaEngine
         ImGui::ShowDemoWindow();
         ImGui::Begin("Background Color Window");
         ImGui::ColorEdit4("Background Color", background_color);
+
+        static bool use_2_buffers = true;
+        ImGui::Checkbox("2 Buffers", &use_2_buffers);
+        if (use_2_buffers)
+        {
+            shader_program->bind();
+            vao_2->bind();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+        }
+        else
+        {
+            shader_program->bind();
+            vao_1->bind();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+        }
+
         ImGui::End();
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
