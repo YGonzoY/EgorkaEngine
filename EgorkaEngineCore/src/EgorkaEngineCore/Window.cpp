@@ -195,8 +195,8 @@ namespace EgorkaEngine
         glClearColor(background_color[0], background_color[1], background_color[2], background_color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shader_program->bind();
-        vao_2->bind();
+        //shader_program->bind();
+        //vao_2->bind();
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
