@@ -3,6 +3,7 @@
 #include "EgorkaEngineCore/Rendering/OpenGL/ShaderProgram.hpp"
 #include "EgorkaEngineCore/Rendering/OpenGL/VertexBuffer.hpp"
 #include "EgorkaEngineCore/Rendering/OpenGL/VertexArray.hpp"
+#include "EgorkaEngineCore/Rendering/OpenGL/IndexBuffer.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -22,14 +23,13 @@ namespace EgorkaEngine
     WITH READING FROM FILES AND ETC*/
 
     GLfloat positions_colors[] = {
-       -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f,
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
-       -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-
-        0.5f,  0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-       -0.5f,  0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f
+       -0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 1.0f,
+       -0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 1.0f,
+        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f
     };
+
+    GLuint indexes[] = {0, 1, 2, 3, 2, 1};
 
     const char* vertex_shader =
         "#version 460\n"
@@ -51,7 +51,7 @@ namespace EgorkaEngine
 
 
     std::unique_ptr<ShaderProgram> shader_program;
-
+    std::unique_ptr<IndexBuffer> index_buffer;
     std::unique_ptr<VertexBuffer> positions_color_vbo;
     std::unique_ptr<VertexArray> vao;
 
@@ -160,8 +160,10 @@ namespace EgorkaEngine
 
         vao = std::make_unique<VertexArray>();
         positions_color_vbo = std::make_unique<VertexBuffer>(positions_colors, sizeof(positions_colors), buffer_layout_2_vec_3);
+        index_buffer = std::make_unique<IndexBuffer>(indexes, sizeof(indexes) / sizeof(GLuint));
 
-        vao->add_buffer(*positions_color_vbo);
+        vao->add_vertex_buffer(*positions_color_vbo);
+        vao->set_index_buffer(*index_buffer);
 
         return 0;
 
@@ -178,10 +180,6 @@ namespace EgorkaEngine
         glClearColor(background_color[0], background_color[1], background_color[2], background_color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //shader_program->bind();
-        //vao_2->bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
 
         ImGuiIO& io = ImGui::GetIO();
         io.DisplaySize.x = static_cast<float>(get_width());
@@ -196,7 +194,8 @@ namespace EgorkaEngine
 
         shader_program->bind();
         vao->bind();
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vao->get_indexes_count()), GL_UNSIGNED_INT, nullptr);
 
         ImGui::End();
         ImGui::Render();

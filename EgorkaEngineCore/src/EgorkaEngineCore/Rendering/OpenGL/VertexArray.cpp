@@ -39,7 +39,7 @@ namespace EgorkaEngine
 		glBindVertexArray(0);
 	}
 
-	void VertexArray::add_buffer(const VertexBuffer& vertex_buffer)
+	void VertexArray::add_vertex_buffer(const VertexBuffer& vertex_buffer)
 	{
 		bind();
 		vertex_buffer.bind();
@@ -58,5 +58,12 @@ namespace EgorkaEngine
 			);
 			++elements_count;
 		}
+	}
+
+	void VertexArray::set_index_buffer(const IndexBuffer& index_buffer)
+	{
+		bind();
+		index_buffer.bind();
+		indexes_count = index_buffer.get_count();
 	}
 }
