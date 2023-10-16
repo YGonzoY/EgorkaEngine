@@ -55,7 +55,6 @@ namespace EgorkaEngine
     std::unique_ptr<VertexBuffer> positions_color_vbo;
     std::unique_ptr<VertexArray> vao;
 
-    /**/
 	Window::Window(std::string _title, const unsigned int _height, const unsigned int _width)
 	{
         wData.title = _title;
@@ -84,7 +83,6 @@ namespace EgorkaEngine
             static bool GLFW_initialized = true;
         }
 
-        /* Create a windowed mode window and its OpenGL context */
         window = glfwCreateWindow(wData.width, wData.height, wData.title.c_str(), nullptr, nullptr);
         if (!window)
         {
@@ -188,13 +186,11 @@ namespace EgorkaEngine
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        //ImGui::ShowDemoWindow();
         ImGui::Begin("Background Color Window");
         ImGui::ColorEdit4("Background Color", background_color);
 
         shader_program->bind();
         vao->bind();
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vao->get_indexes_count()), GL_UNSIGNED_INT, nullptr);
 
         ImGui::End();
