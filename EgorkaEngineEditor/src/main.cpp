@@ -6,7 +6,7 @@ class MyApp : public EgorkaEngine::Application
 {
 	virtual void on_update() override
 	{
-		std::cout << "frame" << frame++;
+		//std::cout << "frame" << frame++;
 	}
 
 	int frame = 0;
