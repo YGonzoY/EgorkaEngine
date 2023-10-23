@@ -14,6 +14,8 @@
 
 #include "EgorkaEngineCore//Rendering//OpenGL/ShaderProgram.hpp"
 
+#include <glm/mat3x3.hpp>
+
 namespace EgorkaEngine
 {
     static bool GLFW_initialized = false;
@@ -162,6 +164,18 @@ namespace EgorkaEngine
 
         vao->add_vertex_buffer(*positions_color_vbo);
         vao->set_index_buffer(*index_buffer);
+
+        glm::mat3 mat1(4, 0, 0, 2, 8, 1, 0, 1, 0);
+        glm::mat3 mat2(4, 2, 9, 2, 0, 4, 1, 4, 2);
+
+        glm::mat3 result = mat1 * mat2;
+
+        LOG_INFO("");
+        LOG_INFO("| {0:3} {1:3} {2:3} |", result[0][0], result[1][0], result[2][0]);
+        LOG_INFO("| {0:3} {1:3} {2:3} |", result[0][1], result[1][1], result[2][1]);
+        LOG_INFO("| {0:3} {1:3} {2:3} |", result[0][2], result[1][2], result[2][2]);
+        LOG_INFO("");
+
 
         return 0;
 
