@@ -1,6 +1,7 @@
 #include "ShaderProgram.hpp"
 #include "EgorkaEngineCore/Log.hpp"
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace EgorkaEngine
 {
@@ -105,5 +106,10 @@ namespace EgorkaEngine
 
         shaderProgram.id = 0;
         shaderProgram.is_compiled = false;
+    }
+
+    void ShaderProgram::setMatrix4(const char* name, const glm::mat4& matrix) const
+    {
+        glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_FALSE, glm::value_ptr(matrix));
     }
 }

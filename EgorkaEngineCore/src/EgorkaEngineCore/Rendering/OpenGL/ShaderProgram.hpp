@@ -1,4 +1,5 @@
 #pragma once
+#include <glm/mat4x4.hpp>
 
 namespace EgorkaEngine
 {
@@ -17,6 +18,7 @@ namespace EgorkaEngine
 		ShaderProgram(const ShaderProgram&) = delete;
 		ShaderProgram& operator=(const ShaderProgram&) = delete;
 
+		void setMatrix4(const char* name, const glm::mat4& matrix) const;
 		void bind() const;
 		static void unbind();
 		bool isCompiled() const { return is_compiled; }
