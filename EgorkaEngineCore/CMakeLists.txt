@@ -6,6 +6,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	include/EgorkaEngineCore/Application.hpp
 	include/EgorkaEngineCore/Log.hpp
 	include/EgorkaEngineCore/Event.hpp
+	include/EgorkaEngineCore/Camera.hpp
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -23,6 +24,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/EgorkaEngineCore/Rendering/OpenGL/VertexBuffer.cpp
 	src/EgorkaEngineCore/Rendering/OpenGL/VertexArray.cpp
 	src/EgorkaEngineCore/Rendering/OpenGL/IndexBuffer.cpp
+	src/EgorkaEngineCore/Camera.cpp
 )
 
 set(ENGINE_ALL_SOURCES
