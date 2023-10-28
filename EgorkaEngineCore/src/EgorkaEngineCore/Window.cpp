@@ -5,6 +5,7 @@
 #include "EgorkaEngineCore/Rendering/OpenGL/VertexArray.hpp"
 #include "EgorkaEngineCore/Rendering/OpenGL/IndexBuffer.hpp"
 #include "EgorkaEngineCore/Camera.hpp"
+#include "EgorkaEngineCore/Rendering/OpenGL/OpenGLRenderer.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -93,24 +94,29 @@ namespace EgorkaEngine
 	int Window::init()
 	{
 
-        if (!GLFW_initialized)
+        glfwSetErrorCallback([](int error_code, const char* description) {LOG_CRITICAL("GLFW error: {0}", description); });
+        //if (!GLFW_initialized)
+        //{
+        if (!glfwInit())
         {
-            if (!glfwInit())
-                return -1;
-
-            static bool GLFW_initialized = true;
+            //return -1;
+            LOG_CRITICAL("can not initialize GLFW");
+            //static bool GLFW_initialized = true;
+            return -1;
+        //}
         }
 
         window = glfwCreateWindow(wData.width, wData.height, wData.title.c_str(), nullptr, nullptr);
         if (!window)
         {
-            glfwTerminate();
+            //glfwTerminate();
             return -2;
         }
 
-        glfwMakeContextCurrent(window);
+        //glfwMakeContextCurrent(window);
 
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        //if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        if(!OpenGLRenderer::init(window))
         {
             LOG_CRITICAL("Can not initialize GLAD");
             return -3;
@@ -152,7 +158,8 @@ namespace EgorkaEngine
         glfwSetFramebufferSizeCallback(window,
             [](GLFWwindow* pWindow, int width, int height)
             {
-                glViewport(0, 0, width, height);
+                //glViewport(0, 0, width, height);
+                OpenGLRenderer::set_viewport(width, height);
             }
         );
 
@@ -181,23 +188,17 @@ namespace EgorkaEngine
         vao->add_vertex_buffer(*positions_color_vbo);
         vao->set_index_buffer(*index_buffer);
 
-        glm::mat3 mat1(4, 0, 0, 2, 8, 1, 0, 1, 0);
-        glm::mat3 mat2(4, 2, 9, 2, 0, 4, 1, 4, 2);
-
-        glm::mat3 result = mat1 * mat2;
-
-        LOG_INFO("");
-        LOG_INFO("| {0:3} {1:3} {2:3} |", result[0][0], result[1][0], result[2][0]);
-        LOG_INFO("| {0:3} {1:3} {2:3} |", result[0][1], result[1][1], result[2][1]);
-        LOG_INFO("| {0:3} {1:3} {2:3} |", result[0][2], result[1][2], result[2][2]);
-        LOG_INFO("");
-
 
         return 0;
 
 	}
 	int Window::shutDown()
 	{
+        if (ImGui::GetCurrentContext())
+        {
+            ImGui::DestroyContext();
+        }
+
         glfwDestroyWindow(window);
         glfwTerminate();
         return 0;
@@ -205,9 +206,11 @@ namespace EgorkaEngine
 
 	void Window::on_update() 
 	{
-        glClearColor(background_color[0], background_color[1], background_color[2], background_color[3]);
-        glClear(GL_COLOR_BUFFER_BIT);
+        //glClearColor(background_color[0], background_color[1], background_color[2], background_color[3]);
+        //glClear(GL_COLOR_BUFFER_BIT);
 
+        OpenGLRenderer::set_clear_color(background_color[0], background_color[1], background_color[2], background_color[3]);
+        OpenGLRenderer::clear();
 
         ImGuiIO& io = ImGui::GetIO();
         io.DisplaySize.x = static_cast<float>(get_width());
@@ -252,8 +255,10 @@ namespace EgorkaEngine
         camera.set_projection_mode(perspective_camera ? Camera::Projection::Perspective : Camera::Projection::Orthographic);
         shader_program->setMatrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
 
-        vao->bind();
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vao->get_indexes_count()), GL_UNSIGNED_INT, nullptr);
+        //vao->bind();
+        //glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vao->get_indexes_count()), GL_UNSIGNED_INT, nullptr);
+
+        OpenGLRenderer::draw(*vao);
 
         ImGui::End();
         ImGui::Render();
