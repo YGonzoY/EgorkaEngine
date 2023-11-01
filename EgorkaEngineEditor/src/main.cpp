@@ -1,12 +1,22 @@
 #include <iostream>
 #include <memory>
 #include "EgorkaEngineCore/Application.hpp"
+#include <imgui/imgui.h>
 
-class MyApp : public EgorkaEngine::Application
+class Editor : public EgorkaEngine::Application
 {
 	virtual void on_update() override
 	{
 		//std::cout << "frame" << frame++;
+	}
+
+	virtual void on_ui_draw() override
+	{
+		ImGui::Begin("Editor");
+		ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
+		ImGui::SliderFloat3("camera rotation", camera_rotation, 0, 360.f);
+		ImGui::Checkbox("Perspective camera", &perspective_camera);
+		ImGui::End();
 	}
 
 	int frame = 0;
@@ -14,11 +24,9 @@ class MyApp : public EgorkaEngine::Application
 
 int main()
 {
-	auto myApp = std::make_unique<MyApp>();
+	auto editor = std::make_unique<Editor>();
 
-	int returnCode = myApp->start(1024, 768, "a");
-
-	std::cin.get();
+	int returnCode = editor->start(1024, 768, "a");
 
 	return returnCode;
 }
