@@ -6,6 +6,7 @@
 #include "EgorkaEngineCore/Rendering/OpenGL/IndexBuffer.hpp"
 #include "EgorkaEngineCore/Camera.hpp"
 #include "EgorkaEngineCore/Rendering/OpenGL/OpenGLRenderer.hpp"
+#include "EgorkaEngineCore/Modules/UIModule.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -80,11 +81,6 @@ namespace EgorkaEngine
         wData.height = _height;
         wData.width = _width;
 		int result = init();
-
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGui_ImplOpenGL3_Init();
-        ImGui_ImplGlfw_InitForOpenGL(window, true);
 	}
 	Window::~Window()
 	{
@@ -95,27 +91,18 @@ namespace EgorkaEngine
 	{
 
         glfwSetErrorCallback([](int error_code, const char* description) {LOG_CRITICAL("GLFW error: {0}", description); });
-        //if (!GLFW_initialized)
-        //{
         if (!glfwInit())
         {
-            //return -1;
             LOG_CRITICAL("can not initialize GLFW");
-            //static bool GLFW_initialized = true;
             return -1;
-        //}
         }
 
         window = glfwCreateWindow(wData.width, wData.height, wData.title.c_str(), nullptr, nullptr);
         if (!window)
         {
-            //glfwTerminate();
             return -2;
         }
 
-        //glfwMakeContextCurrent(window);
-
-        //if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         if(!OpenGLRenderer::init(window))
         {
             LOG_CRITICAL("Can not initialize GLAD");
@@ -163,6 +150,7 @@ namespace EgorkaEngine
             }
         );
 
+        UIModule::on_window_creation(window);
 
         shader_program = std::make_unique<ShaderProgram>(vertex_shader, fragment_shader);
         if (!shader_program->isCompiled())
@@ -192,13 +180,10 @@ namespace EgorkaEngine
         return 0;
 
 	}
+
 	int Window::shutDown()
 	{
-        if (ImGui::GetCurrentContext())
-        {
-            ImGui::DestroyContext();
-        }
-
+        UIModule::on_window_closing();
         glfwDestroyWindow(window);
         glfwTerminate();
         return 0;
@@ -206,28 +191,9 @@ namespace EgorkaEngine
 
 	void Window::on_update() 
 	{
-        //glClearColor(background_color[0], background_color[1], background_color[2], background_color[3]);
-        //glClear(GL_COLOR_BUFFER_BIT);
 
         OpenGLRenderer::set_clear_color(background_color[0], background_color[1], background_color[2], background_color[3]);
         OpenGLRenderer::clear();
-
-        ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize.x = static_cast<float>(get_width());
-        io.DisplaySize.y = static_cast<float>(get_width());
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-        ImGui::Begin("Background Color Window");
-        ImGui::ColorEdit4("Background Color", background_color);
-        ImGui::SliderFloat3("scale", scale, 0.f, 2.f);
-        ImGui::SliderFloat("rotate", &rotate, 0.f, 360.f);
-        ImGui::SliderFloat3("translate", translate, -1.f, 1.f);
-
-        ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
-        ImGui::SliderFloat3("camera rotation", camera_rotation, 0, 360.f);
-        ImGui::Checkbox("Perspective camera", &perspective_camera);
 
         shader_program->bind();
 
@@ -255,14 +221,26 @@ namespace EgorkaEngine
         camera.set_projection_mode(perspective_camera ? Camera::Projection::Perspective : Camera::Projection::Orthographic);
         shader_program->setMatrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
 
-        //vao->bind();
-        //glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vao->get_indexes_count()), GL_UNSIGNED_INT, nullptr);
 
         OpenGLRenderer::draw(*vao);
 
+        UIModule::on_draw_begining();
+        bool show = true;
+        UIModule::show_exsample_docking_space(&show);
+        ImGui::ShowDemoWindow();
+
+        ImGui::Begin("Background Color Window");
+        ImGui::ColorEdit4("Background Color", background_color);
+        ImGui::SliderFloat3("scale", scale, 0.f, 2.f);
+        ImGui::SliderFloat("rotate", &rotate, 0.f, 360.f);
+        ImGui::SliderFloat3("translate", translate, -1.f, 1.f);
+        ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
+        ImGui::SliderFloat3("camera rotation", camera_rotation, 0, 360.f);
+        ImGui::Checkbox("Perspective camera", &perspective_camera);
         ImGui::End();
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        UIModule::on_draw_ending();
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
