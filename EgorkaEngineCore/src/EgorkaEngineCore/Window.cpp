@@ -51,6 +51,26 @@ namespace EgorkaEngine
 
         glfwSetWindowUserPointer(window, &wData);
 
+        glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int code, int action, int mods)
+            {
+                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+                switch (action)
+                {
+                case GLFW_PRESS:
+                    LOG_INFO("pressed {0}", (char)key);
+                    break;
+                case GLFW_RELEASE:
+
+                    break;
+                case GLFW_REPEAT:
+
+                    break;
+                default:
+                    break;
+                }
+            }
+        );
+
         glfwSetWindowSizeCallback(window, 
             [](GLFWwindow* window, int width, int height)
             {
@@ -85,7 +105,6 @@ namespace EgorkaEngine
         glfwSetFramebufferSizeCallback(window,
             [](GLFWwindow* pWindow, int width, int height)
             {
-                //glViewport(0, 0, width, height);
                 OpenGLRenderer::set_viewport(width, height);
             }
         );

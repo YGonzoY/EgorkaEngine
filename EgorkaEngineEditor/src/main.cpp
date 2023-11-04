@@ -7,7 +7,6 @@ class Editor : public EgorkaEngine::Application
 {
 	virtual void on_update() override
 	{
-		//std::cout << "frame" << frame++;
 	}
 
 	virtual void on_ui_draw() override
@@ -26,7 +25,7 @@ int main()
 {
 	auto editor = std::make_unique<Editor>();
 
-	int returnCode = editor->start(1024, 768, "a");
+	int returnCode = editor->start(1024, 768, "Editor");
 
 	return returnCode;
 }

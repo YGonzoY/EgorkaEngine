@@ -7,6 +7,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	include/EgorkaEngineCore/Log.hpp
 	include/EgorkaEngineCore/Event.hpp
 	include/EgorkaEngineCore/Camera.hpp
+	include/EgorkaEngineCore/Keys.hpp
 )
 
 set(ENGINE_PRIVATE_INCLUDES
