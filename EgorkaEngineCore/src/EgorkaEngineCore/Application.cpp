@@ -101,12 +101,23 @@ namespace EgorkaEngine
 					LOG_INFO("window resized to {0}x{1}", event.height, event.width);
 				});
 
+			event_dispatcher.add_event_listener<EventKeyPressed>(
+				[](EventKeyPressed& event)
+				{
+					LOG_INFO("Pressed {0}", (char)event.key_code);
+				});
+
+			event_dispatcher.add_event_listener<EventKeyReleased>(
+				[](EventKeyReleased& event)
+				{
+					LOG_INFO("Released {0}", (char)event.key_code);
+				});
+
 			window->set_eventcallback(
 				[&](BaseEvent& event)
 				{
 					event_dispatcher.dispatch(event);
-				}
-			);
+				});
 
 			shader_program = std::make_unique<ShaderProgram>(vertex_shader, fragment_shader);
 			if (!shader_program->isCompiled())

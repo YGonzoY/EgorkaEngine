@@ -57,14 +57,24 @@ namespace EgorkaEngine
                 switch (action)
                 {
                 case GLFW_PRESS:
+                {
+                    EventKeyPressed event(static_cast<KeyCodes>(key), false);
+                    data.eventCallBackF(event);
                     LOG_INFO("pressed {0}", (char)key);
                     break;
+                }
                 case GLFW_RELEASE:
-
+                {
+                    EventKeyReleased event(static_cast<KeyCodes>(key));
+                    data.eventCallBackF(event);
                     break;
+                }
                 case GLFW_REPEAT:
-
+                {
+                    EventKeyPressed event(static_cast<KeyCodes>(key), true);
+                    data.eventCallBackF(event);
                     break;
+                }
                 default:
                     break;
                 }
