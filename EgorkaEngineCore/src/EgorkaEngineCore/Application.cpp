@@ -2,6 +2,7 @@
 #include "EgorkaEngineCore/Application.hpp"
 #include "EgorkaEngineCore//Window.hpp"
 #include "EgorkaEngineCore/Event.hpp"
+#include "EgorkaEngineCore/Input.hpp"
 
 #include "EgorkaEngineCore/Rendering/OpenGL/ShaderProgram.hpp"
 #include "EgorkaEngineCore/Rendering/OpenGL/VertexBuffer.hpp"
@@ -104,13 +105,28 @@ namespace EgorkaEngine
 			event_dispatcher.add_event_listener<EventKeyPressed>(
 				[](EventKeyPressed& event)
 				{
-					LOG_INFO("Pressed {0}", (char)event.key_code);
+					if (event.key_code <= KeyCodes::KEY_Z)
+					{
+						if (event.is_repeated)
+						{
+							LOG_INFO("Key pressed: {0}, repeated", static_cast<char>(event.key_code));
+						}
+						else
+						{
+							LOG_INFO("Key pressed: {0}", static_cast<char>(event.key_code));
+						}
+					}
+					Input::PressKey(event.key_code);
 				});
 
 			event_dispatcher.add_event_listener<EventKeyReleased>(
 				[](EventKeyReleased& event)
 				{
-					LOG_INFO("Released {0}", (char)event.key_code);
+					if (event.key_code <= KeyCodes::KEY_Z)
+					{
+						LOG_INFO("Released {0}", static_cast<char>(event.key_code));
+					}
+					Input::ReleaseKey(event.key_code);
 				});
 
 			window->set_eventcallback(
