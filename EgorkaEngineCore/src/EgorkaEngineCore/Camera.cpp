@@ -120,6 +120,7 @@ namespace EgorkaEngine
         if (is_updating_view_matrix)
         {
             update_view_matrix();
+            is_updating_view_matrix = false;
         }
         return view_matrix;
     }
