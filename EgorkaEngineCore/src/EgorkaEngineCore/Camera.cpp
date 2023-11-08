@@ -16,23 +16,23 @@ namespace EgorkaEngine
 	void Camera::set_position(const glm::vec3& _position)
 	{
         position = _position;
-        update_view_matrix();
+        is_updating_view_matrix = true;
 	}
 	void Camera::set_rotation(const glm::vec3& _rotation)
 	{
         rotation = _rotation;
-        update_view_matrix();
+        is_updating_view_matrix = true;
 	}
 	void Camera::set_projection_mode(const Projection _projection_mode)
 	{
         projection_mode = _projection_mode;
-        update_view_matrix();
+        is_updating_view_matrix = true;;
 	}
 	void Camera::set_position_rotation(const glm::vec3& _position, const glm::vec3& _rotation)
 	{
         rotation = _rotation;
         position = _position;
-        update_view_matrix();
+        is_updating_view_matrix = true;
 	}
 
     void Camera::update_view_matrix()
@@ -90,28 +90,37 @@ namespace EgorkaEngine
     void Camera::move_forward(const float delta)
     {
         position += direction * delta;
-        update_view_matrix();
+        is_updating_view_matrix = true;
     }
 
     void Camera::move_right(const float delta)
     {
         position += right * delta;
-        update_view_matrix();
+        is_updating_view_matrix = true;
     }
 
     void Camera::move_up(const float delta)
     {
         position += up * delta;
-        update_view_matrix();
+        is_updating_view_matrix = true;
     }
 
-    void Camera::add_movement_and_rotatition(const glm::vec3& movement_delta,
+    void Camera::add_movement_and_rotation(const glm::vec3& movement_delta,
         const glm::vec3& rotation_delta)
     {
         position += direction * movement_delta.x;
         position += right * movement_delta.y;
         position += up * movement_delta.z;
         rotation += rotation_delta;
-        update_view_matrix();
+        is_updating_view_matrix = true;
+    }
+
+    const glm::mat4& Camera::get_view_matrix()
+    {
+        if (is_updating_view_matrix)
+        {
+            update_view_matrix();
+        }
+        return view_matrix;
     }
 }

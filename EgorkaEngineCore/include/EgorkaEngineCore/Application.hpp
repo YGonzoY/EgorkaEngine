@@ -29,6 +29,9 @@ namespace EgorkaEngine
 
 		virtual ~Application();
 
+		virtual void on_mouse_button_event(const MouseButton button_code, const double x_pos, const double y_pos, const bool pressed) {}
+
+		glm::vec2 get_current_cursor_position() const;
 
 		float camera_position[3] = { 0.0f, 0.0f,1.0f };
 		float camera_rotation[3] = { 0.0f, 0.0f,0.0f };

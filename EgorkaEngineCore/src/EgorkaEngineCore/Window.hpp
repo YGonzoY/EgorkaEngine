@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <functional>
-
+#include <glm/ext/vector_float2.hpp>
 #include "EgorkaEngineCore/Event.hpp"
 
 struct GLFWwindow;
@@ -23,6 +23,7 @@ namespace EgorkaEngine
 
 		unsigned int get_width() const { return wData.width; };
 		unsigned int get_height() const { return wData.height; };
+		glm::vec2 get_current_cursor_position() const;
 
 		~Window();
 

@@ -118,12 +118,46 @@ namespace EgorkaEngine
             }
         );
 
+        glfwSetMouseButtonCallback(window,
+            [](GLFWwindow* pWindow, int button, int action, int mods)
+            {
+                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+                double x_pos;
+                double y_pos;
+                glfwGetCursorPos(pWindow, &x_pos, &y_pos);
+                switch (action)
+                {
+                case GLFW_PRESS:
+                {
+                    EventMouseButtonPressed event(static_cast<MouseButton>(button), x_pos, y_pos);
+                    data.eventCallBackF(event);
+                    break;
+                }
+                case GLFW_RELEASE:
+                {
+                    EventMouseButtonReleased event(static_cast<MouseButton>(button), x_pos, y_pos);
+                    data.eventCallBackF(event);
+                    break;
+                }
+                }
+            }
+        );
+
+
         UIModule::on_window_creation(window);
 
 
         return 0;
 
 	}
+
+    glm::vec2 Window::get_current_cursor_position() const
+    {
+        double x_pos;
+        double y_pos;
+        glfwGetCursorPos(window, &x_pos, &y_pos);
+        return { x_pos, y_pos };
+    }
 
 	int Window::shutDown()
 	{

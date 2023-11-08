@@ -22,7 +22,7 @@ namespace EgorkaEngine
 		void set_projection_mode(const Projection _projection_mode);
 		void set_position_rotation(const glm::vec3& _position, const glm::vec3& _rotation);
 
-		const glm::mat4& get_view_matrix() const { return view_matrix; }
+		const glm::mat4& get_view_matrix();
 		const glm::mat4& get_projection_matrix() const { return projection_matrix; }
 
 		void move_forward(const float delta);
@@ -32,9 +32,7 @@ namespace EgorkaEngine
 		const glm::vec3& get_camera_position() const { return position; }
 		const glm::vec3& get_camera_rotation() const { return rotation; }
 
-		// movement_delta.x - forward, movement_delta.y - right, movement_delta.z - up
-		// rotation_delta.x - roll, rotation_delta.y - pitch, rotation_delta.z - yaw
-		void add_movement_and_rotatition(const glm::vec3& movement_delta,
+		void add_movement_and_rotation(const glm::vec3& movement_delta,
 			const glm::vec3& rotation_delta);
 
 	private:
@@ -49,6 +47,7 @@ namespace EgorkaEngine
 		static constexpr glm::vec3 world_up{ 0.f, 0.f, 1.f };
 		static constexpr glm::vec3 world_right{ 0.f, -1.f, 0.f };
 		static constexpr glm::vec3 world_forward{ 1.f, 0.f, 0.f };
+		bool is_updating_view_matrix;
 
 		Projection projection_mode;
 		glm::vec3 position;
