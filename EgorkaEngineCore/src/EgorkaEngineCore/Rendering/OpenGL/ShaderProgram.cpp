@@ -112,4 +112,9 @@ namespace EgorkaEngine
     {
         glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_FALSE, glm::value_ptr(matrix));
     }
+
+    void ShaderProgram::setInt(const char* name, const int value) const
+    {
+        glUniform1i(glGetUniformLocation(id, name), value);
+    }
 }

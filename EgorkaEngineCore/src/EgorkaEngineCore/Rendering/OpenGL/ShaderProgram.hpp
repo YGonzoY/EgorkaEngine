@@ -22,5 +22,6 @@ namespace EgorkaEngine
 		void bind() const;
 		static void unbind();
 		bool isCompiled() const { return is_compiled; }
+		void setInt(const char* name, const int value) const;
 	};
 }
