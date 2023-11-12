@@ -119,12 +119,12 @@ namespace EgorkaEngine
         );
 
         glfwSetMouseButtonCallback(window,
-            [](GLFWwindow* pWindow, int button, int action, int mods)
+            [](GLFWwindow* window, int button, int action, int mods)
             {
-                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
                 double x_pos;
                 double y_pos;
-                glfwGetCursorPos(pWindow, &x_pos, &y_pos);
+                glfwGetCursorPos(window, &x_pos, &y_pos);
                 switch (action)
                 {
                 case GLFW_PRESS:
@@ -140,6 +140,15 @@ namespace EgorkaEngine
                     break;
                 }
                 }
+            }
+        );
+
+        glfwSetScrollCallback(window, 
+            [](GLFWwindow* window, double xoffset, double yoffset)
+            {
+                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+                EventScrolled event(xoffset, yoffset);
+                data.eventCallBackF(event);
             }
         );
 

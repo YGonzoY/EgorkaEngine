@@ -103,6 +103,12 @@ class Editor : public EgorkaEngine::Application
 			m_initial_mouse_pos_y = current_cursor_position.y;
 		}
 
+		if (EgorkaEngine::Input::IsScrolled())
+		{
+			movement_delta.x += 0.1f*EgorkaEngine::Input::ScrollZoom();
+			EgorkaEngine::Input::StopScroll();
+		}
+
 		camera.add_movement_and_rotation(movement_delta, rotation_delta);
 	}
 
@@ -139,6 +145,8 @@ class Editor : public EgorkaEngine::Application
 
 	int frame = 0;
 };
+
+
 
 int main()
 {

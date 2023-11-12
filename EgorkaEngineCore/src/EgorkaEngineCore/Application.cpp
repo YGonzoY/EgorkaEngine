@@ -233,6 +233,12 @@ namespace EgorkaEngine
 					on_mouse_button_event(event.mouse_button, event.x_pos, event.y_pos, false);
 				});
 
+			event_dispatcher.add_event_listener<EventScrolled>(
+				[](EventScrolled& event)
+				{
+					LOG_INFO("Scrolling: {0}", static_cast<double>(event.yoffset));
+					Input::Scroll(event.yoffset);
+				});
 
 			window->set_eventcallback(
 				[&](BaseEvent& event)
@@ -325,6 +331,7 @@ namespace EgorkaEngine
 
 				glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
 				shader_program->setMatrix4("model_matrix", model_matrix);
+				shader_program->setInt("current_frame", current_frame++);
 
 				camera.set_projection_mode(perspective_camera ? Camera::Projection::Perspective : Camera::Projection::Orthographic);
 				shader_program->setMatrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());

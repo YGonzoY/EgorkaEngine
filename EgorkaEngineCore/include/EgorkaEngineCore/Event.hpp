@@ -20,6 +20,8 @@ namespace EgorkaEngine
         MouseButtonReleased,
         MouseMoved,
 
+        Scrolled,
+        StopedScroll,
 
         EventsCount
     };
@@ -145,6 +147,21 @@ namespace EgorkaEngine
         static const EventType type = EventType::MouseButtonReleased;
 
         EventMouseButtonReleased(const MouseButton mouse_button, const double x_pos, const double y_pos) : mouse_button(mouse_button), x_pos(x_pos), y_pos(y_pos){}
+
+        virtual EventType get_type() const override
+        {
+            return type;
+        }
+    };
+
+    struct EventScrolled : public BaseEvent
+    {
+        double xoffset;
+        double yoffset;
+
+        static const EventType type = EventType::Scrolled;
+
+        EventScrolled(double _xoffset, double _yoffset) : xoffset(_xoffset), yoffset(_yoffset) {}
 
         virtual EventType get_type() const override
         {
