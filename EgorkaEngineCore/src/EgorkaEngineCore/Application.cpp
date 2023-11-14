@@ -3,8 +3,7 @@
 #include "EgorkaEngineCore//Window.hpp"
 #include "EgorkaEngineCore/Event.hpp"
 #include "EgorkaEngineCore/Input.hpp"
-
-#include <glad/glad.h>
+#include "EgorkaEngineCore/Rendering/OpenGL/Texture.hpp"
 #include "EgorkaEngineCore/Rendering/OpenGL/ShaderProgram.hpp"
 #include "EgorkaEngineCore/Rendering/OpenGL/VertexBuffer.hpp"
 #include "EgorkaEngineCore/Rendering/OpenGL/VertexArray.hpp"
@@ -13,13 +12,11 @@
 #include "EgorkaEngineCore/Rendering/OpenGL/OpenGLRenderer.hpp"
 #include "EgorkaEngineCore/Modules/UIModule.hpp"
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 #include <imgui/imgui.h>
-
 #include <glm/mat3x3.hpp>
 #include <glm/trigonometric.hpp>
-
 #include <iostream>
 
 
@@ -27,10 +24,10 @@ namespace EgorkaEngine
 {
 
 	GLfloat positions_colors_coords[] = {
-		0.0f, -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   2.f, -1.f,
-		0.0f,  0.5f, -0.5f,   0.0f, 1.0f, 0.0f,  -1.f, -1.f,
-		0.0f, -0.5f,  0.5f,   1.0f, 0.0f, 1.0f,   2.f,  2.f,
-		0.0f,  0.5f,  0.5f,   1.0f, 1.0f, 0.0f,  -1.f,  2.f
+		0.0f, -0.5f, -0.5f,   1.0f, 1.0f, 0.0f,   10.f, 0.f,
+		0.0f,  0.5f, -0.5f,   0.0f, 1.0f, 1.0f,   0.f,  0.f,
+		0.0f, -0.5f,  0.5f,   1.0f, 0.0f, 1.0f,   10.f, 10.f,
+		0.0f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   0.f,  10.f
 	};
 
 
@@ -150,6 +147,8 @@ namespace EgorkaEngine
 	std::unique_ptr<IndexBuffer> index_buffer;
 	std::unique_ptr<VertexBuffer> positions_color_vbo;
 	std::unique_ptr<VertexArray> vao;
+	std::unique_ptr<Texture2D> texture_smile;
+	std::unique_ptr<Texture2D> texture_quads;
 
 	float scale[3] = { 1.f, 1.f, 1.f };
 	float rotate = 0.f;
@@ -252,28 +251,15 @@ namespace EgorkaEngine
 			const unsigned int channels = 3;
 			auto* data = new unsigned char[width * height * channels];
 
-			GLuint textureHandle_Smile;
-			glCreateTextures(GL_TEXTURE_2D, 1, &textureHandle_Smile);
-			glTextureStorage2D(textureHandle_Smile, 1, GL_RGB8, width, height);
 			generate_smile_texture(data, width, height);
-			glTextureSubImage2D(textureHandle_Smile, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-			glTextureParameteri(textureHandle_Smile, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTextureParameteri(textureHandle_Smile, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTextureParameteri(textureHandle_Smile, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureParameteri(textureHandle_Smile, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glBindTextureUnit(0, textureHandle_Smile);
+			texture_smile = std::make_unique<Texture2D>(data, width, height);
+			texture_smile->bind(0);
 
 
-			GLuint textureHandle_Quads;
-			glCreateTextures(GL_TEXTURE_2D, 1, &textureHandle_Quads);
-			glTextureStorage2D(textureHandle_Quads, 1, GL_RGB8, width, height);
+			
 			generate_quads_texture(data, width, height);
-			glTextureSubImage2D(textureHandle_Quads, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-			glTextureParameteri(textureHandle_Quads, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTextureParameteri(textureHandle_Quads, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTextureParameteri(textureHandle_Quads, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureParameteri(textureHandle_Quads, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glBindTextureUnit(1, textureHandle_Quads);
+			texture_quads = std::make_unique<Texture2D>(data, width, height);
+			texture_quads->bind(1);
 
 
 			delete[] data;
@@ -361,9 +347,6 @@ namespace EgorkaEngine
 				window->on_update();
 				on_update();
 			}
-
-			glDeleteTextures(1, &textureHandle_Smile);
-			glDeleteTextures(1, &textureHandle_Quads);
 
 			window = nullptr;
 			return 0;

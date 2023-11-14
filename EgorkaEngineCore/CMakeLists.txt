@@ -19,6 +19,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/EgorkaEngineCore/Rendering/OpenGL/IndexBuffer.hpp
 	src/EgorkaEngineCore/Rendering/OpenGL/OpenGLRenderer.hpp
 	src/EgorkaEngineCore/Modules/UIModule.hpp
+	src/EgorkaEngineCore/Rendering/OpenGL/Texture.hpp
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -32,6 +33,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/EgorkaEngineCore/Rendering/OpenGL/OpenGLRenderer.cpp
 	src/EgorkaEngineCore/Modules/UIModule.cpp
 	src/EgorkaEngineCore/Input.cpp
+	src/EgorkaEngineCore/Rendering/OpenGL/Texture.cpp
 )
 
 set(ENGINE_ALL_SOURCES
