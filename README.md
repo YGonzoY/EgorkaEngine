@@ -1,6 +1,6 @@
 
 This is simple 3D Engine, wich I am making while studing computer graphics. 
-
+PROGRES ~7%
 
 Libraries used:
 OpenGl
@@ -18,3 +18,4 @@ make textures and shaders load from their own files
 
 
 
+![LOLPROGRESS](https://github.com/YGonzoY/EgorkaEngine/assets/113133979/83c9df72-886b-4871-aba9-7d3634bc0ca8)
