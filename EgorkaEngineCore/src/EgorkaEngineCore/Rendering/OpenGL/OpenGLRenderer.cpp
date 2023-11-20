@@ -40,12 +40,22 @@ namespace EgorkaEngine
 
     void OpenGLRenderer::clear()
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     void OpenGLRenderer::set_viewport(const unsigned int _width, const unsigned int _height, const unsigned int _left_offset, const unsigned int _bottom_offset)
     {
         glViewport(_left_offset, _bottom_offset, _width, _height);
+    }
+
+    void OpenGLRenderer::enable_depth_test()
+    {
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    void OpenGLRenderer::disable_depth_test()
+    {
+        glDisable(GL_DEPTH_TEST);
     }
 
     const char* OpenGLRenderer::get_vendor_str()

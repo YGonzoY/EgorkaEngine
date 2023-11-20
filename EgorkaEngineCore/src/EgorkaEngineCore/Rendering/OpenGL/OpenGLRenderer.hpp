@@ -14,6 +14,9 @@ namespace EgorkaEngine
 		static void clear();
 		static void set_viewport(const unsigned int _width, const unsigned int height, const unsigned int _left_offset = 0, const unsigned int bottom_offset = 0);
 
+		static void enable_depth_test();
+		static void disable_depth_test();
+
 		static const char* get_vendor_str();
 		static const char* get_renderer_str();
 		static const char* get_version_str();

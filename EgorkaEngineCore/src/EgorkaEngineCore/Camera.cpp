@@ -67,7 +67,7 @@ namespace EgorkaEngine
         {
             float r = 0.1f;
             float t = 0.1f;
-            float f = 10;
+            float f = 100;
             float n = 0.1f;
             projection_matrix = glm::mat4(n / r, 0, 0, 0,
                                           0, n / t, 0, 0,

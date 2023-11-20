@@ -12,6 +12,7 @@
 #include "EgorkaEngineCore/Rendering/OpenGL/OpenGLRenderer.hpp"
 #include "EgorkaEngineCore/Modules/UIModule.hpp"
 
+#include <glm/ext/matrix_transform.hpp>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
@@ -23,15 +24,29 @@
 namespace EgorkaEngine
 {
 
-	GLfloat positions_colors_coords[] = {
-		0.0f, -0.5f, -0.5f,   1.0f, 1.0f, 0.0f,   10.f, 0.f,
-		0.0f,  0.5f, -0.5f,   0.0f, 1.0f, 1.0f,   0.f,  0.f,
-		0.0f, -0.5f,  0.5f,   1.0f, 0.0f, 1.0f,   10.f, 10.f,
-		0.0f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   0.f,  10.f
+	GLfloat positions_coords[] = {
+		// front
+		-1.0f, -1.f, -1.f,   1.f, 0.f,
+		-1.0f,  1.f, -1.f,   0.f, 0.f,
+		-1.0f, -1.f,  1.f,   1.f, 1.f,
+		-1.0f,  1.f,  1.f,   0.f, 1.f,
+
+		// back
+		 1.0f, -1.f, -1.f,   1.f, 0.f,
+		 1.0f,  1.f, -1.f,   0.f, 0.f,
+		 1.0f, -1.f,  1.f,   1.f, 1.f,
+		 1.0f,  1.f,  1.f,   0.f, 1.f
 	};
 
 
-	GLuint indexes[] = { 0, 1, 2, 3, 2, 1 };
+	GLuint indexes[] = { 
+		0, 1, 2, 3, 2, 1, // front
+		4, 5, 6, 7, 6, 5, // back
+		0, 4, 6, 0, 2, 6, // right
+		1, 5, 3, 3, 7, 5, // left
+		3, 7, 2, 7, 6, 2, // top
+		1, 5, 0, 5, 0, 4  // bottom 
+	};
 
 	void generate_circle(unsigned char* data,
 		const unsigned int width,
@@ -111,17 +126,14 @@ namespace EgorkaEngine
 	const char* vertex_shader =
 		R"(#version 460
            layout(location = 0) in vec3 vertex_position;
-           layout(location = 1) in vec3 vertex_color;
-           layout(location = 2) in vec2 texture_coord;
+           layout(location = 1) in vec2 texture_coord;
            uniform mat4 model_matrix;
            uniform mat4 view_projection_matrix;
            uniform int current_frame; 
 
-           out vec3 color;
            out vec2 tex_coord_smile;
            out vec2 tex_coord_quads;
            void main() {
-              color = vertex_color;
               tex_coord_smile = texture_coord;
               tex_coord_quads = texture_coord + vec2(current_frame / 1000.f, current_frame / 1000.f);
               gl_Position = view_projection_matrix * model_matrix * vec4(vertex_position, 1.0);
@@ -131,7 +143,6 @@ namespace EgorkaEngine
 
 	const char* fragment_shader =
 		R"(#version 460
-           in vec3 color;
            in vec2 tex_coord_smile;
            in vec2 tex_coord_quads;
            layout (binding = 0) uniform sampler2D InTexture_Smile;
@@ -154,6 +165,15 @@ namespace EgorkaEngine
 	float rotate = 0.f;
 	float translate[3] = { 0.f, 0.f, 0.f };
 	float background_color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	std::array<glm::vec3, 5> positions = 
+	{
+			glm::vec3(-2.f, -2.f, -4.f),
+			glm::vec3(-5.f,  0.f,  3.f),
+			glm::vec3(2.f,  1.f, -2.f),
+			glm::vec3(4.f, -3.f,  3.f),
+			glm::vec3(1.f, -7.f,  1.f)
+	};
 
 		Application::Application()
 		{
@@ -279,18 +299,19 @@ namespace EgorkaEngine
 			BufferLayout buffer_layout_vec_3_vec_3_vec_2
 			{
 				ShaderDataType::Float3,
-				ShaderDataType::Float3,
 				ShaderDataType::Float2
 			};
 
 			vao = std::make_unique<VertexArray>();
-			positions_color_vbo = std::make_unique<VertexBuffer>(positions_colors_coords, sizeof(positions_colors_coords), buffer_layout_vec_3_vec_3_vec_2);
+			positions_color_vbo = std::make_unique<VertexBuffer>(positions_coords, sizeof(positions_coords), buffer_layout_vec_3_vec_3_vec_2);
 			index_buffer = std::make_unique<IndexBuffer>(indexes, sizeof(indexes) / sizeof(GLuint));
 
 			vao->add_vertex_buffer(*positions_color_vbo);
 			vao->set_index_buffer(*index_buffer);
 
 			static int current_frame = 0;
+
+			OpenGLRenderer::enable_depth_test();
 
 			while (!CloseWindow)
 			{
@@ -317,13 +338,23 @@ namespace EgorkaEngine
 
 				glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
 				shader_program->setMatrix4("model_matrix", model_matrix);
-				shader_program->setInt("current_frame", current_frame++);
+				//shader_program->setInt("current_frame", current_frame++);
 
 				camera.set_projection_mode(perspective_camera ? Camera::Projection::Perspective : Camera::Projection::Orthographic);
 				shader_program->setMatrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
 
 
 				OpenGLRenderer::draw(*vao);
+
+				for (const glm::vec3& current_position : positions)
+				{
+					glm::mat4 translate_matrix(1, 0, 0, 0,
+						0, 1, 0, 0,
+						0, 0, 1, 0,
+						current_position[0], current_position[1], current_position[2], 1);
+					shader_program->setMatrix4("model_matrix", translate_matrix);
+					OpenGLRenderer::draw(*vao);
+				}
 
 				UIModule::on_draw_begining();
 				bool show = true;
