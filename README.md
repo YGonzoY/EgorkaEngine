@@ -8,6 +8,13 @@ ImGui
 GLM
 SpdLog
 
-Ortographical and perspective cameras are available, 3D space, rendering and object manipulating 
+Now expanding editor's abilities, options to select objects and move them along axises are going to be added soon 
 
-In the future abilities to import textures and 3D models will be avalible. 
+TODO:
+-Object selection 
+-upgrade interface(create elements for adding new objects on the stage)
+make textures and shaders load from their own files 
+-create option to add textures with from user's files 
+
+
+
