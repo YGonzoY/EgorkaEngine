@@ -14,6 +14,8 @@ namespace EgorkaEngine
 		EventDispatcher event_dispatcher;
 		bool CloseWindow = false;
 
+		void draw();
+
 	public:
 		Application();
 		Application(const Application&) = delete;
@@ -22,6 +24,8 @@ namespace EgorkaEngine
 		Application& operator=(Application&&) = delete;
 
 		virtual int start(unsigned int window_w, unsigned int window_h, const char* title);
+
+		void close();
 
 		virtual void on_update() {}
 
@@ -35,6 +39,9 @@ namespace EgorkaEngine
 
 		float camera_position[3] = { 0.0f, 0.0f,1.0f };
 		float camera_rotation[3] = { 0.0f, 0.0f,0.0f };
+		float camera_field_of_view = 60.f;
+		float camera_near_plane = 0.1f;
+		float camera_far_plane = 100.f;
 		bool perspective_camera = true;
 		
 		Camera camera{ glm::vec3(-5.f, 0.f, 0.f) };

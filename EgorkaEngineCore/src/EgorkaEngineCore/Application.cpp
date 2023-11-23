@@ -185,10 +185,60 @@ namespace EgorkaEngine
 			LOG_INFO("closing application");
 		}
 
+		void Application::draw()
+		{
+			OpenGLRenderer::set_clear_color(background_color[0], background_color[1], background_color[2], background_color[3]);
+			OpenGLRenderer::clear();
+
+			shader_program->bind();
+
+			glm::mat4 scale_matrix(scale[0], 0, 0, 0,
+				0, scale[1], 0, 0,
+				0, 0, scale[2], 0,
+				0, 0, 0, 1);
+
+			float rotate_in_radians = glm::radians(rotate);
+			glm::mat4 rotate_matrix(cos(rotate_in_radians), sin(rotate_in_radians), 0, 0,
+				-sin(rotate_in_radians), cos(rotate_in_radians), 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1);
+
+			glm::mat4 translate_matrix(1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				translate[0], translate[1], translate[2], 1);
+
+			glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
+			shader_program->setMatrix4("model_matrix", model_matrix);
+			static int current_frame = 0;
+			shader_program->setInt("current_frame", current_frame++);
+
+			shader_program->setMatrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
+			OpenGLRenderer::draw(*vao);
+
+			for (const glm::vec3& current_position : positions)
+			{
+				glm::mat4 translate_matrix(1, 0, 0, 0,
+					0, 1, 0, 0,
+					0, 0, 1, 0,
+					current_position[0], current_position[1], current_position[2], 1);
+				shader_program->setMatrix4("model_matrix", translate_matrix);
+				OpenGLRenderer::draw(*vao);
+			}
+
+			UIModule::on_draw_begining();
+			on_ui_draw();
+			UIModule::on_draw_ending();
+
+			window->on_update();
+			on_update();
+		}
+
 		int Application::start(unsigned int window_w, unsigned int window_h, const char* title)
 		{
 			window = std::make_unique<Window>(title, window_w, window_h);
-			
+			camera.set_viewport_size(static_cast<float>(window_w), static_cast<float>(window_h));
+
 			event_dispatcher.add_event_listener<EventMouseMoved>(
 				[](EventMouseMoved& event)
 				{
@@ -200,13 +250,16 @@ namespace EgorkaEngine
 				[&](EventWindowClose& event)
 					{
 						LOG_INFO("window closed");
-						CloseWindow = true;
+						close();
 					});
 
 			event_dispatcher.add_event_listener<EventWindowResize>(
-				[](EventWindowResize& event)
+				[&](EventWindowResize& event)
 				{
 					LOG_INFO("window resized to {0}x{1}", event.height, event.width);
+					LOG_INFO("[Resized] Changed size to {0}x{1}", event.width, event.height);
+					camera.set_viewport_size(event.width, event.height);
+					draw();
 				});
 
 			event_dispatcher.add_event_listener<EventKeyPressed>(
@@ -309,74 +362,11 @@ namespace EgorkaEngine
 			vao->add_vertex_buffer(*positions_color_vbo);
 			vao->set_index_buffer(*index_buffer);
 
-			static int current_frame = 0;
-
 			OpenGLRenderer::enable_depth_test();
 
 			while (!CloseWindow)
 			{
-				OpenGLRenderer::set_clear_color(background_color[0], background_color[1], background_color[2], background_color[3]);
-				OpenGLRenderer::clear();
-
-				shader_program->bind();
-
-				glm::mat4 scale_matrix(scale[0], 0, 0, 0,
-					0, scale[1], 0, 0,
-					0, 0, scale[2], 0,
-					0, 0, 0, 1);
-
-				float rotate_in_radians = glm::radians(rotate);
-				glm::mat4 rotate_matrix(cos(rotate_in_radians), sin(rotate_in_radians), 0, 0,
-					-sin(rotate_in_radians), cos(rotate_in_radians), 0, 0,
-					0, 0, 1, 0,
-					0, 0, 0, 1);
-
-				glm::mat4 translate_matrix(1, 0, 0, 0,
-					0, 1, 0, 0,
-					0, 0, 1, 0,
-					translate[0], translate[1], translate[2], 1);
-
-				glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
-				shader_program->setMatrix4("model_matrix", model_matrix);
-				//shader_program->setInt("current_frame", current_frame++);
-
-				camera.set_projection_mode(perspective_camera ? Camera::Projection::Perspective : Camera::Projection::Orthographic);
-				shader_program->setMatrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
-
-
-				OpenGLRenderer::draw(*vao);
-
-				for (const glm::vec3& current_position : positions)
-				{
-					glm::mat4 translate_matrix(1, 0, 0, 0,
-						0, 1, 0, 0,
-						0, 0, 1, 0,
-						current_position[0], current_position[1], current_position[2], 1);
-					shader_program->setMatrix4("model_matrix", translate_matrix);
-					OpenGLRenderer::draw(*vao);
-				}
-
-				UIModule::on_draw_begining();
-				bool show = true;
-				UIModule::show_exsample_docking_space(&show);
-				ImGui::ShowDemoWindow();
-
-				ImGui::Begin("Background Color Window");
-				ImGui::ColorEdit4("Background Color", background_color);
-				ImGui::SliderFloat3("scale", scale, 0.f, 2.f);
-				ImGui::SliderFloat("rotate", &rotate, 0.f, 360.f);
-				ImGui::SliderFloat3("translate", translate, -1.f, 1.f);
-				ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
-				ImGui::SliderFloat3("camera rotation", camera_rotation, 0, 360.f);
-				ImGui::Checkbox("Perspective camera", &perspective_camera);
-				ImGui::End();
-
-				on_ui_draw();
-
-				UIModule::on_draw_ending();
-
-				window->on_update();
-				on_update();
+				draw();
 			}
 
 			window = nullptr;
@@ -386,5 +376,10 @@ namespace EgorkaEngine
 		glm::vec2 Application::get_current_cursor_position() const
 		{
 			return window->get_current_cursor_position();
+		}
+
+		void Application::close()
+		{
+			CloseWindow = true;
 		}
 }

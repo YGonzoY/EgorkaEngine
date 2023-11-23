@@ -1,7 +1,7 @@
 
 #include "EgorkaEngineCore/Camera.hpp"
 #include <glm/trigonometric.hpp>
-#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace EgorkaEngine
 {
@@ -26,7 +26,7 @@ namespace EgorkaEngine
 	void Camera::set_projection_mode(const Projection _projection_mode)
 	{
         projection_mode = _projection_mode;
-        is_updating_view_matrix = true;;
+        update_projection_matrix();
 	}
 	void Camera::set_position_rotation(const glm::vec3& _position, const glm::vec3& _rotation)
 	{
@@ -65,14 +65,7 @@ namespace EgorkaEngine
     {
         if (projection_mode == Projection::Perspective)
         {
-            float r = 0.1f;
-            float t = 0.1f;
-            float f = 100;
-            float n = 0.1f;
-            projection_matrix = glm::mat4(n / r, 0, 0, 0,
-                                          0, n / t, 0, 0,
-                                          0, 0, (-f - n) / (f - n), -1,
-                                          0, 0, -2 * f * n / (f - n), 0);
+            projection_matrix = glm::perspective(glm::radians(field_of_view), viewport_width / viewport_height, near_clip_plane, far_clip_plane);
         }
         else
         {
@@ -123,5 +116,30 @@ namespace EgorkaEngine
             is_updating_view_matrix = false;
         }
         return view_matrix;
+    }
+
+    void Camera::set_far_clip_plane(const float _far)
+    {
+        far_clip_plane = _far;
+        update_projection_matrix();
+    }
+
+    void Camera::set_near_clip_plane(const float _near)
+    {
+        near_clip_plane = _near;
+        update_projection_matrix();
+    }
+
+    void Camera::set_viewport_size(const float _width, const float _height)
+    {
+        viewport_width = _width;
+        viewport_height = _height;
+        update_projection_matrix();
+    }
+
+    void Camera::set_field_of_view(const float _field_of_view)
+    {
+        field_of_view = _field_of_view;
+        update_projection_matrix();
     }
 }
