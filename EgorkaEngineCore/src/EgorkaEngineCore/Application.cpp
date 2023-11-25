@@ -24,28 +24,56 @@
 namespace EgorkaEngine
 {
 
-	GLfloat positions_coords[] = {
-		// front
-		-1.0f, -1.f, -1.f,   1.f, 0.f,
-		-1.0f,  1.f, -1.f,   0.f, 0.f,
-		-1.0f, -1.f,  1.f,   1.f, 1.f,
-		-1.0f,  1.f,  1.f,   0.f, 1.f,
+	GLfloat positions_normals_uvs[] = 
+	{
+        //    position             normal            UV                  index
 
-		// back
-		 1.0f, -1.f, -1.f,   1.f, 0.f,
-		 1.0f,  1.f, -1.f,   0.f, 0.f,
-		 1.0f, -1.f,  1.f,   1.f, 1.f,
-		 1.0f,  1.f,  1.f,   0.f, 1.f
+        // FRONT
+        -1.0f, -1.f, -1.f,    -1.f,  0.f,  0.f,     0.f, 0.f,              // 0
+        -1.0f,  1.f, -1.f,    -1.f,  0.f,  0.f,     1.f, 0.f,              // 1
+        -1.0f,  1.f,  1.f,    -1.f,  0.f,  0.f,     1.f, 1.f,              // 2
+        -1.0f, -1.f,  1.f,    -1.f,  0.f,  0.f,     0.f, 1.f,              // 3
+
+        // BACK                                  
+         1.0f, -1.f, -1.f,     1.f,  0.f,  0.f,     1.f, 0.f,              // 4
+         1.0f,  1.f, -1.f,     1.f,  0.f,  0.f,     0.f, 0.f,              // 5
+         1.0f,  1.f,  1.f,     1.f,  0.f,  0.f,     0.f, 1.f,              // 6
+         1.0f, -1.f,  1.f,     1.f,  0.f,  0.f,     1.f, 1.f,              // 7
+
+        // RIGHT
+        -1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     0.f, 0.f,              // 8
+         1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     1.f, 0.f,              // 9
+         1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     1.f, 1.f,              // 10
+        -1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     0.f, 1.f,              // 11
+
+        // LEFT
+        -1.0f, -1.f, -1.f,     0.f, -1.f,  0.f,     1.f, 0.f,              // 12
+         1.0f, -1.f, -1.f,     0.f, -1.f,  0.f,     0.f, 0.f,              // 13
+         1.0f, -1.f,  1.f,     0.f, -1.f,  0.f,     0.f, 1.f,              // 14
+        -1.0f, -1.f,  1.f,     0.f, -1.f,  0.f,     1.f, 1.f,              // 15
+
+        // TOP
+        -1.0f, -1.f,  1.f,     0.f,  0.f,  1.f,     0.f, 0.f,              // 16
+        -1.0f,  1.f,  1.f,     0.f,  0.f,  1.f,     1.f, 0.f,              // 17
+         1.0f,  1.f,  1.f,     0.f,  0.f,  1.f,     1.f, 1.f,              // 18
+         1.0f, -1.f,  1.f,     0.f,  0.f,  1.f,     0.f, 1.f,              // 19
+
+         // BOTTOM
+         -1.0f, -1.f, -1.f,    0.f,  0.f, -1.f,     0.f, 1.f,              // 20
+         -1.0f,  1.f, -1.f,    0.f,  0.f, -1.f,     1.f, 1.f,              // 21
+          1.0f,  1.f, -1.f,    0.f,  0.f, -1.f,     1.f, 0.f,              // 22
+          1.0f, -1.f, -1.f,    0.f,  0.f, -1.f,     0.f, 0.f,              // 23
 	};
 
 
-	GLuint indexes[] = { 
-		0, 1, 2, 3, 2, 1, // front
-		4, 5, 6, 7, 6, 5, // back
-		0, 4, 6, 0, 2, 6, // right
-		1, 5, 3, 3, 7, 5, // left
-		3, 7, 2, 7, 6, 2, // top
-		1, 5, 0, 5, 0, 4  // bottom 
+	GLuint indexes[] = 
+	{ 
+		 0,  1,  2,  2,  3,  0, // front
+		 4,  5,  6,  6,  7,  4, // back
+		 8,  9, 10, 10, 11,  8, // right
+		12, 13, 14, 14, 15, 12, // left
+		16, 17, 18, 18, 19, 16, // top
+		20, 21, 22, 22, 23, 20  // bottom
 	};
 
 	void generate_circle(unsigned char* data,
@@ -126,7 +154,9 @@ namespace EgorkaEngine
 	const char* vertex_shader =
 		R"(#version 460
            layout(location = 0) in vec3 vertex_position;
-           layout(location = 1) in vec2 texture_coord;
+           layout(location = 1) in vec3 vertex_normal;
+           layout(location = 2) in vec2 texture_coord;
+
            uniform mat4 model_matrix;
            uniform mat4 view_projection_matrix;
            uniform int current_frame; 
@@ -352,11 +382,12 @@ namespace EgorkaEngine
 			BufferLayout buffer_layout_vec_3_vec_3_vec_2
 			{
 				ShaderDataType::Float3,
+				ShaderDataType::Float3,
 				ShaderDataType::Float2
 			};
 
 			vao = std::make_unique<VertexArray>();
-			positions_color_vbo = std::make_unique<VertexBuffer>(positions_coords, sizeof(positions_coords), buffer_layout_vec_3_vec_3_vec_2);
+			positions_color_vbo = std::make_unique<VertexBuffer>(positions_normals_uvs, sizeof(positions_normals_uvs), buffer_layout_vec_3_vec_3_vec_2);
 			index_buffer = std::make_unique<IndexBuffer>(indexes, sizeof(indexes) / sizeof(GLuint));
 
 			vao->add_vertex_buffer(*positions_color_vbo);
