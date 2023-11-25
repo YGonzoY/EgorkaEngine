@@ -18,5 +18,4 @@ TODO: <br>
 -create option to add textures with from user's files </p> 
 
 
-
-![LOLPROGRESS](https://github.com/YGonzoY/EgorkaEngine/assets/113133979/83c9df72-886b-4871-aba9-7d3634bc0ca8)
+![progress2lol](https://github.com/YGonzoY/EgorkaEngine/assets/113133979/62ccca99-da09-4521-a03a-4662d2a33e7f)
