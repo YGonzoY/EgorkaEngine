@@ -179,7 +179,7 @@ namespace EgorkaEngine
            layout (binding = 1) uniform sampler2D InTexture_Quads;
            out vec4 frag_color;
            void main() {
-              frag_color = texture(InTexture_Smile, tex_coord_smile) * texture(InTexture_Quads, tex_coord_quads);
+              frag_color = texture(InTexture_Smile, tex_coord_smile);
            }
         )";
 
