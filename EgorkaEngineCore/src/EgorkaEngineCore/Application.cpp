@@ -109,9 +109,9 @@ namespace EgorkaEngine
 		{
 			for (unsigned int y = 0; y < height; ++y)
 			{
-				data[3 * (x + width * y) + 0] = 200;
-				data[3 * (x + width * y) + 1] = 191;
-				data[3 * (x + width * y) + 2] = 231;
+				data[3 * (x + width * y) + 0] = 0;
+				data[3 * (x + width * y) + 1] = 0;
+				data[3 * (x + width * y) + 2] = 190;
 			}
 		}
 
@@ -123,7 +123,7 @@ namespace EgorkaEngine
 		generate_circle(data, width, height, width * 0.5, height * 0.45, width * 0.2, 255, 255, 0);
 
 		// eyes
-		generate_circle(data, width, height, width * 0.35, height * 0.6, width * 0.07, 255, 0, 255);
+		generate_circle(data, width, height, width * 0.35, height * 0.6, width * 0.07, 0, 0, 255);
 		generate_circle(data, width, height, width * 0.65, height * 0.6, width * 0.07, 0, 0, 255);
 	}
 
@@ -194,7 +194,7 @@ namespace EgorkaEngine
 	float scale[3] = { 1.f, 1.f, 1.f };
 	float rotate = 0.f;
 	float translate[3] = { 0.f, 0.f, 0.f };
-	float background_color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float background_color[4] = { 138.0f, 138.0f, 138.0f, 0.0f };
 
 	std::array<glm::vec3, 5> positions = 
 	{
