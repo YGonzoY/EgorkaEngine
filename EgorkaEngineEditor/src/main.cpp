@@ -7,6 +7,14 @@
 
 class Editor : public EgorkaEngine::Application
 {
+
+	float camera_position[3] = { 0.0f, 0.0f,1.0f };
+	float camera_rotation[3] = { 0.0f, 0.0f,0.0f };
+	float camera_field_of_view = 60.f;
+	float camera_near_plane = 0.1f;
+	float camera_far_plane = 100.f;
+	bool perspective_camera = true;
+
 	double m_initial_mouse_pos_x = 0.0;
 	double m_initial_mouse_pos_y = 0.0;
 
@@ -189,6 +197,8 @@ class Editor : public EgorkaEngine::Application
 		camera_far_plane = camera.get_far_clip_plane();
 
 		ImGui::Begin("Editor");
+		ImGui::SliderFloat3("light source position", light_src_position, -10.f, 10.f);
+		ImGui::ColorEdit3("light source color", light_src_color);
 		if (ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f))
 		{
 			camera.set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));

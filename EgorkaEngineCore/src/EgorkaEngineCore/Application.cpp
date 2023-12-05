@@ -184,7 +184,38 @@ namespace EgorkaEngine
         )";
 
 
+
+
+	const char* light_src_vertex_shader =
+		R"(#version 460
+           layout(location = 0) in vec3 vertex_position;
+           layout(location = 1) in vec3 vertex_normal;
+           layout(location = 2) in vec2 texture_coord;
+
+           uniform mat4 model_matrix;
+           uniform mat4 view_projection_matrix;
+   
+
+           void main() {
+              gl_Position = view_projection_matrix * model_matrix * vec4(vertex_position * 0.1, 1.0);
+           }
+        )";
+
+
+	const char* light_src_fragment_shader =
+		R"(#version 460
+           out vec4 frag_color;
+
+			uniform vec3 light_color;
+
+           void main() {
+              frag_color = vec4(light_color, 1.0f);
+           }
+        )";
+
+
 	std::unique_ptr<ShaderProgram> shader_program;
+	std::unique_ptr<ShaderProgram> light_src_shader_program;
 	std::unique_ptr<IndexBuffer> index_buffer;
 	std::unique_ptr<VertexBuffer> positions_color_vbo;
 	std::unique_ptr<VertexArray> vao;
@@ -194,7 +225,8 @@ namespace EgorkaEngine
 	float scale[3] = { 1.f, 1.f, 1.f };
 	float rotate = 0.f;
 	float translate[3] = { 0.f, 0.f, 0.f };
-	float background_color[4] = { 138.0f, 138.0f, 138.0f, 0.0f };
+
+	float background_color[4] = { 0.33f, 0.33f, 0.33f, 0.0f };
 
 	std::array<glm::vec3, 5> positions = 
 	{
@@ -222,7 +254,7 @@ namespace EgorkaEngine
 
 			shader_program->bind();
 
-			glm::mat4 scale_matrix(scale[0], 0, 0, 0,
+			/*glm::mat4 scale_matrix(scale[0], 0, 0, 0,
 				0, scale[1], 0, 0,
 				0, 0, scale[2], 0,
 				0, 0, 0, 1);
@@ -239,13 +271,14 @@ namespace EgorkaEngine
 				translate[0], translate[1], translate[2], 1);
 
 			glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
-			shader_program->setMatrix4("model_matrix", model_matrix);
+			shader_program->setMatrix4("model_matrix", model_matrix);*/
 			static int current_frame = 0;
 			shader_program->setInt("current_frame", current_frame++);
 
 			shader_program->setMatrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
 			OpenGLRenderer::draw(*vao);
 
+			//cubes
 			for (const glm::vec3& current_position : positions)
 			{
 				glm::mat4 translate_matrix(1, 0, 0, 0,
@@ -255,6 +288,21 @@ namespace EgorkaEngine
 				shader_program->setMatrix4("model_matrix", translate_matrix);
 				OpenGLRenderer::draw(*vao);
 			}
+
+			//light
+			{
+				light_src_shader_program->bind();
+				light_src_shader_program->setMatrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
+				glm::mat4 translate_matrix(1, 0, 0, 0,
+					0, 1, 0, 0,
+					0, 0, 1, 0,
+					light_src_position[0], light_src_position[1], light_src_position[2], 1);
+				light_src_shader_program->setMatrix4("model_matrix", translate_matrix);
+				light_src_shader_program->setVec3("light_color", glm::vec3(light_src_color[0], light_src_color[1], light_src_color[2]));
+				OpenGLRenderer::draw(*vao);
+			}
+
+			//OpenGLRenderer::draw(*vao);
 
 			UIModule::on_draw_begining();
 			on_ui_draw();
@@ -392,6 +440,12 @@ namespace EgorkaEngine
 
 			vao->add_vertex_buffer(*positions_color_vbo);
 			vao->set_index_buffer(*index_buffer);
+
+			light_src_shader_program = std::make_unique<ShaderProgram>(light_src_vertex_shader, light_src_fragment_shader);
+			if (!light_src_shader_program->isCompiled())
+			{
+				return false;
+			}
 
 			OpenGLRenderer::enable_depth_test();
 

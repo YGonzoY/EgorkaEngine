@@ -117,4 +117,9 @@ namespace EgorkaEngine
     {
         glUniform1i(glGetUniformLocation(id, name), value);
     }
+
+    void ShaderProgram::setVec3(const char* name, glm::vec3& value) const
+    {
+        glUniform3f(glGetUniformLocation(id, name), value.x, value.y, value.z);
+    }
 }

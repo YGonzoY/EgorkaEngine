@@ -23,5 +23,6 @@ namespace EgorkaEngine
 		static void unbind();
 		bool isCompiled() const { return is_compiled; }
 		void setInt(const char* name, const int value) const;
+		void setVec3(const char* name, glm::vec3& value) const;
 	};
 }
