@@ -2,8 +2,8 @@
 
 #include "Keys.hpp"
 
-namespace EgorkaEngine {
-
+namespace EgorkaEngine 
+{
     class Input 
     {
     private:

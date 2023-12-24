@@ -9,6 +9,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	include/EgorkaEngineCore/Camera.hpp
 	include/EgorkaEngineCore/Keys.hpp
 	include/EgorkaEngineCore/Input.hpp
+	include/EgorkaEngineCore/Object.hpp
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -34,6 +35,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/EgorkaEngineCore/Modules/UIModule.cpp
 	src/EgorkaEngineCore/Input.cpp
 	src/EgorkaEngineCore/Rendering/OpenGL/Texture.cpp
+	src/EgorkaEngineCore/Object.cpp
 )
 
 set(ENGINE_ALL_SOURCES
