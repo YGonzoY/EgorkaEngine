@@ -1,6 +1,6 @@
 
 <h2>This is simple 3D Engine, wich I am making while studing computer graphics</h2> 
-<h5>PROGRESS ~8%</h5>
+<h5>PROGRESS ~7.5%</h5>
 <hr>
 
 Libraries used:
